@@ -13,7 +13,7 @@ if [ ! -f Makefile ]; then
 fi
 
 make
-ctest
-./run-clang-tidy.py -quiet
+ctest --output-on-failure
+# ./run-clang-tidy.py -quiet
 
 # TODO: Check formatting

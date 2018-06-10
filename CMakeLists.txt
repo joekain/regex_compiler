@@ -22,12 +22,9 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 project_check_cpp_version()
 
 ## Snippets to enforce a C++ version
-#if (not CPP14_SUPPORT)
-#  message(FATAL_ERROR "C++14 support is required.")
-#endif()
-#if (not CPP11_SUPPORT)
-#  message(FATAL_ERROR "C++11 support is required.")
-#endif()
+if (NOT CPP17_SUPPORT)
+ message(FATAL_ERROR "C++17 support is required.")
+endif()
 
 # Trace compilation for tools (ex: YouCompleteMe)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
