@@ -41,3 +41,7 @@ TEST_CASE("A group consisting of one letter can be parsed", "[Parser]") {
   CHECK(p.size() == 1);
   CHECK_NOTHROW(get<Group>(*begin(p)));
 }
+
+TEST_CASE("An unclosed group should not parse", "[Parser]") {
+  CHECK_THROWS(Parser("(a"));
+}
