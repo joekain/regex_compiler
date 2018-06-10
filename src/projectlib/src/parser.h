@@ -10,13 +10,19 @@ struct Literal {
 };
 
 struct Group;
+struct Alternative;
 
 // Sort of like variant but with support for recursion
-using Term = std::variant<Literal, Group>;
+using Term = std::variant<Literal, Group, Alternative>;
 using Terms = std::vector<Term>;
 
 struct Group {
     std::vector<Term> pattern;
+};
+
+struct Alternative {
+    // There will be exactly two
+    std::vector<Term> patterns;
 };
 
 class Parser {
@@ -27,15 +33,8 @@ class Parser {
   Terms parse_until(std::string::iterator &it, std::string::iterator end, char end_char) {
     std::vector<Term> local_terms;
     for (; it != end && *it != end_char; it++) {
-      std::cout << "Parsing " << *it << std::endl;
       Term t = parse(it, end);
       local_terms.push_back(t);
-    }
-
-    if (it == end) {
-        std::cout << "Ended on end\n";
-    } else {
-        std::cout << "Ended on " << *it << std::endl;
     }
 
     return local_terms;
@@ -43,20 +42,33 @@ class Parser {
 
   Term parse_group(std::string::iterator &it, std::string::iterator end) {
     Terms group_terms = parse_until(it, end, ')');
-    std::cout << "Finished group, at " << *it << std::endl;
     if (*it != ')') throw std::invalid_argument("Unmatched \'(\'");
 
     return Term{Group{group_terms}};
   }
 
+    void parse_alternative_lookahead(std::string::iterator &it, std::string::iterator end, Term &t) {
+    if (it != end && *(it + 1) == '|') {
+      it+=2;  // skip over |
+      Term t2 = parse(it, end);
+      t = Term{Alternative{std::vector<Term>{t, t2}}};
+    }
+  }
+
   Term parse(std::string::iterator &it, std::string::iterator end) {
     auto c = *it;
+    Term t;
     if (c == '(') {
       it++;
-      return parse_group(it, end);
+      t = parse_group(it, end);
     } else {
-      return parse_literal(c);
+      t = parse_literal(c);
     }
+
+    // Look-ahead for Alternative
+    parse_alternative_lookahead(it, end, t);
+
+    return t;
   }
 
  public:
