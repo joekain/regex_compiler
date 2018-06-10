@@ -7,12 +7,13 @@ macro(add_project_test name)
     add_executable(${name} ${name}.cc)
     target_link_libraries(${name} ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
     add_dependencies(build-test ${name})
-    add_test(${name} ${name})  
+    add_test(${name} ${name})
   endif()
 endmacro()
 
 # Reference test sources
 add_project_test(test1 CATCH)
+add_project_test(test_parser CATCH)
 
 # Create main test executable
 add_executable(unit_tests ${catch_exe_source_list})
