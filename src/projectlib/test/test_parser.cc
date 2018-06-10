@@ -34,3 +34,10 @@ TEST_CASE("A two letter pattern can be parsed", "[Parser]") {
   CHECK_NOTHROW(get<Literal>(*begin(p)));
   CHECK(get<Literal>(*begin(p)).pattern == 'a');
 }
+
+TEST_CASE("A group consisting of one letter can be parsed", "[Parser]") {
+  auto p = Parser("(a)");
+
+  CHECK(p.size() == 1);
+  CHECK_NOTHROW(get<Group>(*begin(p)));
+}
