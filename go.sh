@@ -14,6 +14,6 @@ fi
 
 make
 ctest --output-on-failure
-# ./run-clang-tidy.py -quiet
+./run-clang-tidy.py -quiet
 
 # TODO: Check formatting
