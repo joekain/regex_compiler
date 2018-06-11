@@ -73,3 +73,24 @@ TEST_CASE("Alternative can be followed by more pattern", "[Parser]") {
   CHECK(p.size() == 2);
   CHECK_NOTHROW(get<Alternative>(*begin(p)));
 }
+
+TEST_CASE("Kleene closure of a single letter can be parsed", "[Parser]") {
+  auto p = Parser("a*");
+
+  CHECK(p.size() == 1);
+  CHECK_NOTHROW(get<Kleene>(*begin(p)));
+}
+
+TEST_CASE("Kleene closure can be followed by more pattern", "[Parser]") {
+  auto p = Parser("a*b");
+
+  CHECK(p.size() == 2);
+  CHECK_NOTHROW(get<Kleene>(*begin(p)));
+}
+
+TEST_CASE("Alternative of Kleene closure can be parsed", "[Parser]") {
+  auto p = Parser("a*|b");
+
+  CHECK(p.size() == 1);
+  CHECK_NOTHROW(get<Alternative>(*begin(p)));
+}

@@ -11,9 +11,10 @@ struct Literal {
 
 struct Group;
 struct Alternative;
+struct Kleene;
 
 // Sort of like variant but with support for recursion
-using Term = std::variant<Literal, Group, Alternative>;
+using Term = std::variant<Literal, Group, Alternative, Kleene>;
 using Terms = std::vector<Term>;
 
 struct Group {
@@ -21,8 +22,13 @@ struct Group {
 };
 
 struct Alternative {
-    // There will be exactly two
-    std::vector<Term> patterns;
+  // There will be exactly two
+  std::vector<Term> patterns;
+};
+
+struct Kleene {
+    // There will be exactly one, vector used in place of pointer
+    std::vector<Term> pattern;
 };
 
 class Parser {
@@ -30,7 +36,8 @@ class Parser {
     return Term{Literal{c}};
   }
 
-  Terms parse_until(std::string::iterator &it, std::string::iterator end, char end_char) {
+  Terms parse_until(std::string::iterator &it, std::string::iterator end,
+                    char end_char) {
     std::vector<Term> local_terms;
     for (; it != end && *it != end_char; it++) {
       Term t = parse(it, end);
@@ -47,9 +54,18 @@ class Parser {
     return Term{Group{group_terms}};
   }
 
-    void parse_alternative_lookahead(std::string::iterator &it, std::string::iterator end, Term &t) {
+  void parse_kleene_lookahead(std::string::iterator &it,
+                              std::string::iterator end, Term &t) {
+    if (it != end && *(it + 1) == '*') {
+      it += 1;  // skip over *
+      t = Term{Kleene{std::vector<Term>{t}}};
+    }
+  }
+
+  void parse_alternative_lookahead(std::string::iterator &it,
+                                   std::string::iterator end, Term &t) {
     if (it != end && *(it + 1) == '|') {
-      it+=2;  // skip over |
+      it += 2;  // skip over |
       Term t2 = parse(it, end);
       t = Term{Alternative{std::vector<Term>{t, t2}}};
     }
@@ -65,7 +81,7 @@ class Parser {
       t = parse_literal(c);
     }
 
-    // Look-ahead for Alternative
+    parse_kleene_lookahead(it, end, t);
     parse_alternative_lookahead(it, end, t);
 
     return t;
