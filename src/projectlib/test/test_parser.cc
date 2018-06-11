@@ -53,6 +53,17 @@ TEST_CASE("A group consisting of two letters can be parsed", "[Parser]") {
   CHECK_NOTHROW(get<Group>(*begin(p)));
 }
 
+TEST_CASE("A group consisting of two groups can be parsed", "[Parser]") {
+  auto p = Parser("((a)(b))");
+
+  CHECK(p.size() == 1);
+  CHECK_NOTHROW(get<Group>(*begin(p)));
+  auto g = get<Group>(*begin(p));
+  CHECK(g.pattern.size() == 2);
+  CHECK_NOTHROW(get<Group>(g.pattern[0]));
+  CHECK_NOTHROW(get<Group>(g.pattern[1]));
+}
+
 TEST_CASE("Two alternative single letter patterns can be parsed", "[Parser]") {
   auto p = Parser("a|b");
 
