@@ -17,6 +17,8 @@ TEST_CASE("A Parser behaves like a container") {
     Parser::iterator e = p.end();
 
     (void)s;
+    (void)b;
+    (void)e;
 }
 
 TEST_CASE("A single letter pattern can be parsed", "[Parser]") {
