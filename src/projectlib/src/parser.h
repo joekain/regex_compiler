@@ -1,6 +1,6 @@
 #include <string.h>
-#include <variant>
 #include <iostream>
+#include <variant>
 
 namespace regex_compiler {
 
@@ -18,17 +18,17 @@ using Term = std::variant<Literal, Group, Alternative, Kleene>;
 using Terms = std::vector<Term>;
 
 struct Group {
-    std::vector<Term> pattern;
+  Terms pattern;
 };
 
 struct Alternative {
   // There will be exactly two
-  std::vector<Term> patterns;
+  Terms patterns;
 };
 
 struct Kleene {
-    // There will be exactly one, vector used in place of pointer
-    std::vector<Term> pattern;
+  // There will be exactly one, vector used in place of pointer
+  Terms pattern;
 };
 
 class Parser {
@@ -36,9 +36,8 @@ class Parser {
     return Term{Literal{c}};
   }
 
-  Terms parse_until(std::string::iterator &it, std::string::iterator end,
-                    char end_char) {
-    std::vector<Term> local_terms;
+  Terms parse_until(std::string::iterator &it, std::string::iterator end, char end_char) {
+    Terms local_terms;
     for (; it != end && *it != end_char; it++) {
       Term t = parse(it, end);
       local_terms.push_back(t);
@@ -54,20 +53,18 @@ class Parser {
     return Term{Group{group_terms}};
   }
 
-  void parse_kleene_lookahead(std::string::iterator &it,
-                              std::string::iterator end, Term &t) {
+  void parse_kleene_lookahead(std::string::iterator &it, std::string::iterator end, Term &t) {
     if (it != end && *(it + 1) == '*') {
       it += 1;  // skip over *
-      t = Term{Kleene{std::vector<Term>{t}}};
+      t = Term{Kleene{Terms{t}}};
     }
   }
 
-  void parse_alternative_lookahead(std::string::iterator &it,
-                                   std::string::iterator end, Term &t) {
+  void parse_alternative_lookahead(std::string::iterator &it, std::string::iterator end, Term &t) {
     if (it != end && *(it + 1) == '|') {
       it += 2;  // skip over |
       Term t2 = parse(it, end);
-      t = Term{Alternative{std::vector<Term>{t, t2}}};
+      t = Term{Alternative{Terms{t, t2}}};
     }
   }
 
@@ -93,21 +90,21 @@ class Parser {
     terms = parse_until(it, s.end(), 0);
   }
 
-  using iterator = std::vector<Term>::iterator;
+  using iterator = Terms::iterator;
 
   size_t size() {
     return terms.size();
-    }
+  }
 
-    iterator begin() noexcept {
-      return terms.begin();
-    }
+  iterator begin() noexcept {
+    return terms.begin();
+  }
 
-    iterator end() noexcept {
-      return terms.end();
-    }
+  iterator end() noexcept {
+    return terms.end();
+  }
 
-   private:
-    std::vector<Term> terms;
+ private:
+  Terms terms;
 };
 }  // namespace regex_compiler
