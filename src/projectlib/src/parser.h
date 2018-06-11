@@ -1,5 +1,5 @@
-#include <string.h>
-#include <iostream>
+#include <string>
+#include <vector>
 #include <variant>
 
 namespace regex_compiler {
