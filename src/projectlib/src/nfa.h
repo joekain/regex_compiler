@@ -39,4 +39,9 @@ using TransitionList = std::list<Transition>;
 // A transition table is a map of states to list of possible transitions
 using TransitionTable = std::unordered_map<State, TransitionList>;
 
+class NFA {
+ public:
+  NFA(Terms::iterator begin, Terms::iterator end){};
+};
+
 }  // namespace regex_compiler
