@@ -1,3 +1,5 @@
+#pragma once
+
 #include "terms.h"
 
 namespace regex_compiler {
