@@ -6,7 +6,7 @@ using namespace std;
 using namespace regex_compiler;
 
 TEST_CASE("The empty string can be parsed", "[Parser]") {
-    auto p = Parser("");
+  auto p = Parser("");
 }
 
 TEST_CASE("A Parser behaves like a container") {
