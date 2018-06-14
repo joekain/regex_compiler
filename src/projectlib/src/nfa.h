@@ -40,8 +40,24 @@ using TransitionList = std::list<Transition>;
 using TransitionTable = std::unordered_map<State, TransitionList>;
 
 class NFA {
+  TransitionTable table;
+
  public:
-  NFA(Terms::iterator begin, Terms::iterator end){};
+  static const State initial = 0;
+  static const Input epsilon = 0;
+
+  NFA(Terms::iterator begin, Terms::iterator end);
+
+  const TransitionList& getTransitionsForState(State state) const {
+    return table.at(state);
+  }
+
+  State getTransition(State state, Input input) const {
+    auto transitions = table.at(state);
+    auto t = find_if(std::begin(transitions), std::end(transitions),
+                           [input](Transition& t) { return (t.input == input); });
+    return t->new_state;
+  }
 };
 
 }  // namespace regex_compiler
