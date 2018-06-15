@@ -6,16 +6,17 @@ struct Builder {
   TransitionTable table;
   State next_state;
 
+  void ensure_node(State s) {
+    TransitionList l;
+    table.emplace(s, l);
+  }
+
   void insert(State from, Input input, State to) {
-    auto listIt = table.find(from);
-    if (listIt != table.end()) {
-      auto &list = listIt->second;
-      list.emplace_front(input, to);
-    } else {
-      TransitionList l;
-      l.push_front(Transition{input, to});
-      table.emplace(from, l);
-    }
+    ensure_node(to);
+    ensure_node(from);
+
+    auto &list = table.at(from);
+    list.emplace_front(input, to);
   }
 
   State visit_literal(State current_state, const Term &term) {
@@ -62,13 +63,13 @@ struct Builder {
   }
 
   State visit_group(State current_state, const Term &term) {
-      const Terms &terms = std::get<Group>(term).pattern;
+    const Terms &terms = std::get<Group>(term).pattern;
 
-      for (auto &term : terms) {
-          current_state = visit_term(current_state, term);
-      }
+    for (auto &term : terms) {
+      current_state = visit_term(current_state, term);
+    }
 
-      return current_state;
+    return current_state;
   }
 
   State visit_term(State current_state, const Term &t) {
@@ -88,15 +89,15 @@ struct Builder {
     next_state = NFA::initial;
 
     for (auto termIt = begin; termIt != end; termIt++) {
-        current_state = visit_term(current_state, *termIt);
+      current_state = visit_term(current_state, *termIt);
     }
   }
-};
-
+};  // namespace regex_compiler
 
 NFA::NFA(Terms::iterator begin, Terms::iterator end) {
   auto builder = Builder(begin, end);
   table = builder.table;
+  end_state = builder.next_state;
 }
 
 }  // namespace regex_compiler

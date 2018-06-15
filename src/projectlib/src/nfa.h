@@ -41,6 +41,7 @@ using TransitionTable = std::unordered_map<State, TransitionList>;
 
 class NFA {
   TransitionTable table;
+  State end_state;
 
  public:
   static const State initial = 0;
@@ -55,8 +56,15 @@ class NFA {
   State getTransition(State state, Input input) const {
     auto transitions = table.at(state);
     auto t = find_if(std::begin(transitions), std::end(transitions),
-                           [input](Transition& t) { return (t.input == input); });
+                     [input](Transition& t) { return (t.input == input); });
     return t->new_state;
+  }
+
+  State start() const {
+    return NFA::initial;
+  }
+  State final() const {
+    return end_state;
   }
 };
 
