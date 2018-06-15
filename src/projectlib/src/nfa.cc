@@ -42,24 +42,22 @@ struct Builder {
   State visit_kleene(State current_state, const Term &term) {
     Term subTerm = std::get<Kleene>(term).pattern[0];
 
-    // There are 3 more states for this loop
+    // There are 2 extra states for this loop
     State s1 = ++next_state;
     State s2 = ++next_state;
-    State s3 = ++next_state;
 
     // Or free transition to s3 for zero occurances
-    insert(current_state, NFA::epsilon, s3);
+    insert(current_state, NFA::epsilon, s2);
     // free transition to s1
     insert(current_state, NFA::epsilon, s1);
 
     // Build a loop between s1 and s2
     State end = visit_term(s1, subTerm);
-    insert(end, NFA::epsilon, s2);
-    insert(s2, NFA::epsilon, s1);
+    insert(end, NFA::epsilon, s1);
     // Transition from s2 to s3 to end the loop
-    insert(s2, NFA::epsilon, s3);
+    insert(end, NFA::epsilon, s2);
 
-    return s3;
+    return s2;
   }
 
   State visit_group(State current_state, const Term &term) {
