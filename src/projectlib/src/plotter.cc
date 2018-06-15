@@ -13,19 +13,22 @@ void Plotter::print_footer() {
 
 void Plotter::print_edges() {
   for (auto state = nfa.start(); state <= nfa.final(); ++state) {
-    auto list = nfa.getTransitionsForState(state);
-    for (auto trans : list) {
-      dot << "  " << state << " -> ";
-      dot << trans.new_state;
-      dot << " [label=";
-      if (trans.input) {
-        dot << trans.input;
-      } else {
-        dot << "epsilon";
-      }
-      dot << "];\n";
+    for (auto trans : nfa.getTransitionsForState(state)) {
+      print_edge(state, trans.input, trans.new_state);
     }
   }
+}
+
+void Plotter::print_edge(State from, Input input, State to) {
+  dot << "  " << from << " -> ";
+  dot << to;
+  dot << " [label=";
+  if (input) {
+    dot << input;
+  } else {
+    dot << "epsilon";
+  }
+  dot << "];\n";
 }
 
 Plotter::Plotter(const NFA &nfa_, const char *dotfilename) : dot(dotfilename), nfa(nfa_) {

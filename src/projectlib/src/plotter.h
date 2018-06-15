@@ -14,6 +14,7 @@ class Plotter {
 
   void print_header();
   void print_edges();
+  void print_edge(State from, Input input, State to);
   void print_footer();
 
  public:
