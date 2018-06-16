@@ -16,6 +16,7 @@ add_project_test(test1 CATCH)
 add_project_test(test_parser CATCH)
 add_project_test(test_nfa CATCH)
 add_project_test(test_parser_nfa CATCH)
+add_project_test(test_dfa CATCH)
 
 # Create main test executable
 add_executable(unit_tests ${catch_exe_source_list})

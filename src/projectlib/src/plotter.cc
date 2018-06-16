@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "plotter.h"
 
 namespace regex_compiler {
@@ -11,7 +13,7 @@ void Plotter::print_footer() {
   dot << "}\n";
 }
 
-void Plotter::print_edges() {
+void Plotter::print_edges(const nfa::NFA &nfa) {
   for (auto state = nfa.start(); state <= nfa.final(); ++state) {
     for (auto trans : nfa.getTransitionsForState(state)) {
       print_edge(state, trans.input, trans.new_state);
@@ -19,9 +21,32 @@ void Plotter::print_edges() {
   }
 }
 
-void Plotter::print_edge(nfa::State from, nfa::Input input, nfa::State to) {
-  dot << "  " << from << " -> ";
-  dot << to;
+void Plotter::print_edges(const dfa::DFA &dfa) {
+  for (auto &&[state, _] : dfa) {
+    for (auto trans : dfa.getTransitionsForState(state)) {
+      print_edge(state, trans.input, trans.new_state);
+    }
+  }
+}
+
+std::string to_string(nfa::State state) {
+  return std::to_string(state);
+}
+
+std::string to_string(dfa::State s) {
+  std::ostringstream ss;
+  ss << "{";
+  for (auto elem : s) {
+    ss << elem << " ";
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <class State>
+void Plotter::print_edge(State from, nfa::Input input, State to) {
+  dot << "  \"" << to_string(from) << "\" -> ";
+  dot << "\"" << to_string(to) << "\"";
   dot << " [label=";
   if (input) {
     dot << input;
@@ -31,9 +56,15 @@ void Plotter::print_edge(nfa::State from, nfa::Input input, nfa::State to) {
   dot << "];\n";
 }
 
-Plotter::Plotter(const nfa::NFA &nfa_, const char *dotfilename) : dot(dotfilename), nfa(nfa_) {
+Plotter::Plotter(const nfa::NFA &nfa, const char *dotfilename) : dot(dotfilename) {
   print_header();
-  print_edges();
+  print_edges(nfa);
+  print_footer();
+}
+
+Plotter::Plotter(const dfa::DFA &dfa, const char *dotfilename) : dot(dotfilename) {
+  print_header();
+  print_edges(dfa);
   print_footer();
 }
 

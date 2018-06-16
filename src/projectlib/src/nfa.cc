@@ -87,6 +87,8 @@ struct Builder {
     State current_state = NFA::initial;
     next_state = NFA::initial;
 
+    ensure_node(NFA::initial);
+
     for (auto termIt = begin; termIt != end; termIt++) {
       current_state = visit_term(current_state, *termIt);
     }

@@ -44,7 +44,7 @@ class NFA {
   State end_state;
 
  public:
-  static const State initial = 0;
+  static constexpr State initial = 0;
   static const Input epsilon = 0;
 
   NFA(Terms::iterator begin, Terms::iterator end);
