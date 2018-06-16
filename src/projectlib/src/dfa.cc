@@ -12,20 +12,31 @@ using NFATransitionSet = std::unordered_set<nfa::Transition>;
 
 using StatesByInput = std::unordered_map<Input, State>;
 
+static StatesByInput reachable(const nfa::NFA& nfa, nfa::State from);
+
+static void insert_new_transition(StatesByInput& map, nfa::Transition transition) {
+  auto&& [it, _] = map.emplace(transition.input, State{});
+  it->second.emplace(transition.new_state);
+}
+
+static void insert_recursive_transitions(StatesByInput& map, const nfa::NFA& nfa,
+                                         nfa::State new_state) {
+  auto new_map = reachable(nfa, new_state);
+  for (auto&& [input, state] : new_map) {
+    auto&& [it, _] = map.emplace(input, State{});
+    it->second.insert(begin(state), end(state));
+  }
+}
+
 static StatesByInput reachable(const nfa::NFA& nfa, nfa::State from) {
   auto list = nfa.getTransitionsForState(from);
   StatesByInput map;
 
   for (nfa::Transition& nfa_transition : list) {
     if (nfa_transition.input != nfa::NFA::epsilon) {
-      auto&& [it, _] = map.emplace(nfa_transition.input, State{});
-      it->second.emplace(nfa_transition.new_state);
+      insert_new_transition(map, nfa_transition);
     } else {
-      auto new_map = reachable(nfa, nfa_transition.new_state);
-      for (auto&& [input, state] : new_map) {
-        auto&& [it, _] = map.emplace(input, State{});
-        it->second.insert(begin(state), end(state));
-      }
+      insert_recursive_transitions(map, nfa, nfa_transition.new_state);
     }
   }
 
