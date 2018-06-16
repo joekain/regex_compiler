@@ -19,7 +19,7 @@ void Plotter::print_edges() {
   }
 }
 
-void Plotter::print_edge(State from, Input input, State to) {
+void Plotter::print_edge(nfa::State from, nfa::Input input, nfa::State to) {
   dot << "  " << from << " -> ";
   dot << to;
   dot << " [label=";
@@ -31,7 +31,7 @@ void Plotter::print_edge(State from, Input input, State to) {
   dot << "];\n";
 }
 
-Plotter::Plotter(const NFA &nfa_, const char *dotfilename) : dot(dotfilename), nfa(nfa_) {
+Plotter::Plotter(const nfa::NFA &nfa_, const char *dotfilename) : dot(dotfilename), nfa(nfa_) {
   print_header();
   print_edges();
   print_footer();

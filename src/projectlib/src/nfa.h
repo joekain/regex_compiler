@@ -11,7 +11,7 @@
 #include "terms.h"
 
 namespace regex_compiler {
-
+namespace nfa {
 // The NFA consists of states and transitions, based on inputs, from
 // those states to other stats.
 //
@@ -68,4 +68,5 @@ class NFA {
   }
 };
 
+}  // namespace nfa
 }  // namespace regex_compiler

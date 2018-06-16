@@ -1,6 +1,7 @@
 #include "nfa.h"
 
 namespace regex_compiler {
+namespace nfa {
 
 struct Builder {
   TransitionTable table;
@@ -98,4 +99,5 @@ NFA::NFA(Terms::iterator begin, Terms::iterator end) {
   end_state = builder.next_state;
 }
 
+}  // namespace nfa
 }  // namespace regex_compiler

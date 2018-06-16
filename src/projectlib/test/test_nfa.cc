@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace regex_compiler;
+using namespace regex_compiler::nfa;
 
 // Determines if an NFA accepts a given input string
 class Transitions : public Catch::MatcherBase<NFA> {

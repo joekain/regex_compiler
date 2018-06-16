@@ -8,6 +8,7 @@
 
 using namespace std;
 using namespace regex_compiler;
+using namespace nfa;
 
 TEST_CASE("Parse and build NFA", "[Parser, NFA]") {
   auto p = Parser("");

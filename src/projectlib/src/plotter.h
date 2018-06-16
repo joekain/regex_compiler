@@ -10,15 +10,15 @@ namespace regex_compiler {
 
 class Plotter {
   std::ofstream dot;
-  const NFA &nfa;
+  const nfa::NFA &nfa;
 
   void print_header();
   void print_edges();
-  void print_edge(State from, Input input, State to);
+  void print_edge(nfa::State from, nfa::Input input, nfa::State to);
   void print_footer();
 
  public:
-  Plotter(const NFA &nfa, const char *dotfilename);
+  Plotter(const nfa::NFA &nfa, const char *dotfilename);
 };
 
 }  // namespace regex_compiler
