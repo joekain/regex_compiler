@@ -10,21 +10,21 @@ State DFA::initial{nfa::NFA::initial};
 
 using NFATransitionSet = std::unordered_set<nfa::Transition>;
 
-// NFATransitionSet
+using StatesByInput = std::unordered_map<Input, State>;
 
-std::unordered_map<Input, State> reachable(const nfa::NFA& nfa, nfa::State from) {
+static StatesByInput reachable(const nfa::NFA& nfa, nfa::State from) {
   auto list = nfa.getTransitionsForState(from);
-  std::unordered_map<Input, State> map;
+  StatesByInput map;
 
   for (nfa::Transition& nfa_transition : list) {
     if (nfa_transition.input != nfa::NFA::epsilon) {
-      auto pair = map.emplace(nfa_transition.input, State{});
-      pair.first->second.emplace(nfa_transition.new_state);
+      auto&& [it, _] = map.emplace(nfa_transition.input, State{});
+      it->second.emplace(nfa_transition.new_state);
     } else {
       auto new_map = reachable(nfa, nfa_transition.new_state);
       for (auto&& [input, state] : new_map) {
-        auto pair = map.emplace(input, State{});
-        pair.first->second.insert(begin(state), end(state));
+        auto&& [it, _] = map.emplace(input, State{});
+        it->second.insert(begin(state), end(state));
       }
     }
   }
@@ -33,12 +33,6 @@ std::unordered_map<Input, State> reachable(const nfa::NFA& nfa, nfa::State from)
 }
 
 void DFA::ensure_node(State s) {
-  std::cout << "Ensuring {";
-  for (auto sx : s) {
-    std::cout << sx << ", ";
-  }
-  std::cout << "}\n";
-
   TransitionList l;
   table.emplace(s, l);
 }
@@ -46,14 +40,6 @@ void DFA::ensure_node(State s) {
 void DFA::insert(State from, Input input, State to) {
   ensure_node(from);
   ensure_node(to);
-
-  std::cout << "Looking up {";
-  for (auto s : from) {
-    std::cout << s << ", ";
-  }
-  std::cout << "}\n";
-
-  std::cout << "inserting " << input << std::endl;
 
   auto& list = table.at(from);
   Transition t{input, to};
@@ -70,7 +56,6 @@ DFA::DFA(nfa::NFA& nfa) {
     queue.pop_front();
 
     for (auto nfa_state : from) {
-      std::cout << "Looking up " << nfa_state << " from nfa\n";
       auto transitions_by_input = reachable(nfa, nfa_state);
 
       // The sets of transitions are dfa:State objects
