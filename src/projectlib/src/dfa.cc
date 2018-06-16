@@ -67,13 +67,14 @@ DFA::DFA(nfa::NFA& nfa) {
     queue.pop_front();
 
     for (auto nfa_state : from) {
-      auto transitions_by_input = reachable(nfa, nfa_state);
-
-      // The sets of transitions are dfa:State objects
-      for (auto&& [input, to] : transitions_by_input) {
+      // The reachable sets of transitions are dfa:State objects
+      for (auto&& [input, to] : reachable(nfa, nfa_state)) {
+        // Queue any new states for further traversal
         if (table.find(to) == table.end()) {
           queue.push_back(to);
         }
+
+        // Insert the transition into our table
         insert(from, input, to);
       }
     }
