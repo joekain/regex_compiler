@@ -91,11 +91,11 @@ struct Builder {
       current_state = visit_term(current_state, *termIt);
     }
   }
-};  // namespace regex_compiler
+};
 
 NFA::NFA(Terms::iterator begin, Terms::iterator end) {
-  auto builder = Builder(begin, end);
-  table = builder.table;
+  Builder builder{begin, end};
+  table = std::move(builder.table);
   end_state = builder.next_state;
 }
 
