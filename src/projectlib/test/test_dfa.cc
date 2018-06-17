@@ -68,6 +68,9 @@ TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
   Terms terms{Kleene{base}};
   auto dfa = dfa_from_terms(terms);
   CHECK_THAT(dfa, DFATransitions(DFA::initial, 'a'));
+  CHECK(dfa.accepts("a"));
+  CHECK(dfa.accepts("aa"));
+  // CHECK(dfa.accepts(""));
 }
 
 TEST_CASE("It can build a DFA for an Alternative", "[DFA]") {

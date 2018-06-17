@@ -33,9 +33,8 @@ static StatesByInput reachable(const nfa::NFA& nfa, nfa::State from) {
   StatesByInput map;
 
   for (nfa::Transition& nfa_transition : list) {
-    if (nfa_transition.input != nfa::NFA::epsilon) {
-      insert_new_transition(map, nfa_transition);
-    } else {
+    insert_new_transition(map, nfa_transition);
+    if (nfa_transition.input == nfa::NFA::epsilon) {
       insert_recursive_transitions(map, nfa, nfa_transition.new_state);
     }
   }
@@ -60,8 +59,10 @@ void DFA::insert(State from, Input input, State to) {
 DFA::DFA(nfa::NFA& nfa) {
   std::list<State> queue;
 
-  ensure_node(initial);
-  queue.push_back(initial);
+  // auto initial_state = reachable(nfa, nfa::NFA::initial).at(nfa::NFA::epsilon);
+  auto initial_state = dfa::DFA::initial;
+  ensure_node(initial_state);
+  queue.push_back(initial_state);
   while (!queue.empty()) {
     State from = queue.front();
     queue.pop_front();
@@ -79,6 +80,34 @@ DFA::DFA(nfa::NFA& nfa) {
       }
     }
   }
+
+  // Build final states - a state is final if it contains the final NFA state
+  for (auto&& [state, _] : table) {
+    if (state.find(nfa.final()) != state.end()) {
+      final_states.emplace(state);
+    }
+  }
+}
+
+bool DFA::accepts(std::string pattern) {
+  // Traverse the DFA and see if end up in a final state
+  State current_state = initial;
+
+  for (Input input : pattern) {
+    auto list = getTransitionsForState(current_state);
+    bool found = false;
+    for (auto& transition : list) {
+      if (transition.input == input) {
+        found = true;
+        current_state = transition.new_state;
+        break;
+      }
+    }
+
+    if (!found) return false;
+  }
+
+  return is_final(current_state);
 }
 
 }  // namespace dfa

@@ -47,6 +47,12 @@ class DFA {
   TransitionTable::const_iterator end() const {
     return table.end();
   }
+
+  bool accepts(std::string);
+
+  bool is_final(State state) {
+    return final_states.find(state) != final_states.end();
+  }
 };
 
 }  // namespace dfa

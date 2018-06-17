@@ -45,7 +45,7 @@ class NFA {
 
  public:
   static constexpr State initial = 0;
-  static const Input epsilon = 0;
+  static constexpr Input epsilon = 0;
 
   NFA(Terms::iterator begin, Terms::iterator end);
 
