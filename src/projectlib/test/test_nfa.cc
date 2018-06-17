@@ -47,8 +47,7 @@ TEST_CASE("It can build an NFA for a Kleene closure", "[NFA]") {
   Terms terms{Kleene{base}};
   auto nfa = NFA(std::begin(terms), std::end(terms));
   CHECK_THAT(nfa, Transitions(NFA::initial, NFA::epsilon));
-  auto state = nfa.getTransition(NFA::initial, NFA::epsilon);
-  CHECK_THAT(nfa, Transitions(state, 'a'));
+  CHECK_THAT(nfa, Transitions(1, 'a'));
 }
 
 TEST_CASE("It can build an NFA for an Alternative", "[NFA]") {
