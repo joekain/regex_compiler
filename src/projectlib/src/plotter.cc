@@ -17,7 +17,7 @@ struct Plotter {
   void print_final_nodes(const dfa::DFA &dfa);
   void print_footer();
 
-  Plotter(const char *dotfilename) : dot(dotfilename) {
+  explicit Plotter(const char *dotfilename) : dot(dotfilename) {
   }
 };
 

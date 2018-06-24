@@ -41,13 +41,13 @@ class DFATransitions : public Catch::MatcherBase<DFA> {
   DFATransitions(State state, Input input) : state_(std::move(state)), input_(input) {
   }
 
-  virtual bool match(DFA const& dfa) const override {
+  bool match(DFA const& dfa) const override {
     auto transitions = dfa.getTransitionsForState(state_);
     return any_of(std::begin(transitions), std::end(transitions),
                   [this](Transition& t) { return (t.input == this->input_); });
   }
 
-  virtual std::string describe() const override {
+  std::string describe() const override {
     return std::string();
     std::ostringstream ss;
     ss << "Transitions from state " << to_string(state_) << " on " << input_;

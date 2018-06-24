@@ -10,15 +10,18 @@ TEST_CASE("The empty string can be parsed", "[Parser]") {
 }
 
 TEST_CASE("A Parser behaves like a container") {
-    auto p = Parser("");
+  auto p = Parser("");
 
-    size_t s = p.size();
-    Parser::iterator b = p.begin();
-    Parser::iterator e = p.end();
+  size_t s = p.size();
 
-    (void)s;
-    (void)b;
-    (void)e;
+  // Enforce that begin and end return the advertised iterator type
+
+  Parser::iterator b = p.begin();  // NOLINT(hicpp-use-auto)
+  Parser::iterator e = p.end();    // NOLINT(hicpp-use-auto)
+
+  (void)s;
+  (void)b;
+  (void)e;
 }
 
 TEST_CASE("A single letter pattern can be parsed", "[Parser]") {

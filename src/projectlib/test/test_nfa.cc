@@ -17,14 +17,14 @@ class Transitions : public Catch::MatcherBase<NFA> {
   Transitions(State state, Input input) : state_(state), input_(input) {
   }
 
-  virtual bool match(NFA const& nfa) const override {
+  bool match(NFA const& nfa) const override {
     // Lookup transition table for
     auto transitions = nfa.getTransitionsForState(state_);
     return any_of(std::begin(transitions), std::end(transitions),
                   [this](Transition& t) { return (t.input == this->input_); });
   }
 
-  virtual std::string describe() const override {
+  std::string describe() const override {
     std::ostringstream ss;
     ss << "Transitions from state " << state_ << " on " << input_;
     return ss.str();

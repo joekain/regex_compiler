@@ -74,7 +74,7 @@ struct Builder {
     list.push_front(t);
   }
 
-  Builder(nfa::NFA& nfa) : nfa_(nfa) {
+  explicit Builder(nfa::NFA& nfa) : nfa_(nfa) {
     initial = nfa_.getEpsilonClosure(nfa::NFA::initial);
     push(initial);
     while (!empty()) {
