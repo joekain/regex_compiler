@@ -18,43 +18,43 @@ TEST_CASE("Parse and build NFA", "[Parser, NFA]") {
 TEST_CASE("Parse and build NFA for /a/", "[Parser, NFA]") {
   auto p = Parser("a");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/a.dot");
+  Plot(nfa, "/tmp/a.dot");
 }
 
 TEST_CASE("Parse and build NFA for /a*/", "[Parser, NFA]") {
   auto p = Parser("a*");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/a_kleene.dot");
+  Plot(nfa, "/tmp/a_kleene.dot");
 }
 
 TEST_CASE("Parse and build NFA for /ab/", "[Parser, NFA]") {
   auto p = Parser("ab");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/ab.dot");
+  Plot(nfa, "/tmp/ab.dot");
 }
 
 TEST_CASE("Parse and build NFA for /ab*/", "[Parser, NFA]") {
   auto p = Parser("ab*");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/ab_kleene_.dot");
+  Plot(nfa, "/tmp/ab_kleene_.dot");
 }
 
 TEST_CASE("Parse and build NFA for /a|b*/", "[Parser, NFA]") {
   auto p = Parser("a|b*");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/a_alternate_b_kleene.dot");
+  Plot(nfa, "/tmp/a_alternate_b_kleene.dot");
 }
 
 TEST_CASE("Parse and build NFA for /a|b/", "[Parser, NFA]") {
   auto p = Parser("a|b");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/a_alternate_b.dot");
+  Plot(nfa, "/tmp/a_alternate_b.dot");
 }
 
 TEST_CASE("Parse and build NFA for /(ac)|b*/", "[Parser, NFA]") {
   auto p = Parser("(ac)|b*");
   auto nfa = NFA(p.begin(), p.end());
-  Plotter(nfa, "/tmp/open_a_c_close_alternate_b_kleene.dot");
+  Plot(nfa, "/tmp/open_a_c_close_alternate_b_kleene.dot");
 }
 
 TEST_CASE("Epsilon closure for /a|b/", "[NFA]") {

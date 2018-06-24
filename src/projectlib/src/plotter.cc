@@ -4,6 +4,23 @@
 
 namespace regex_compiler {
 
+struct Plotter {
+  std::ofstream dot;
+
+  void print_header();
+  void print_edges(const nfa::NFA &nfa);
+  void print_edges(const dfa::DFA &dfa);
+  template <class State>
+  void print_edge(State from, nfa::Input input, State to);
+  template <class State>
+  void print_final_node(State node);
+  void print_final_nodes(const dfa::DFA &dfa);
+  void print_footer();
+
+  Plotter(const char *dotfilename) : dot(dotfilename) {
+  }
+};
+
 void Plotter::print_header() {
   dot << "digraph {\n";
   dot << "  rankdir=LR;\n";
@@ -67,18 +84,20 @@ void Plotter::print_final_nodes(const dfa::DFA &dfa) {
   }
 }
 
-Plotter::Plotter(const nfa::NFA &nfa, const char *dotfilename) : dot(dotfilename) {
-  print_header();
-  print_edges(nfa);
-  print_final_node(nfa.final());
-  print_footer();
+void Plot(const nfa::NFA &nfa, const char *dotfilename) {
+  Plotter p(dotfilename);
+  p.print_header();
+  p.print_edges(nfa);
+  p.print_final_node(nfa.final());
+  p.print_footer();
 }
 
-Plotter::Plotter(const dfa::DFA &dfa, const char *dotfilename) : dot(dotfilename) {
-  print_header();
-  print_edges(dfa);
-  print_final_nodes(dfa);
-  print_footer();
+void Plot(const dfa::DFA &dfa, const char *dotfilename) {
+  Plotter p(dotfilename);
+  p.print_header();
+  p.print_edges(dfa);
+  p.print_final_nodes(dfa);
+  p.print_footer();
 }
 
 }  // namespace regex_compiler
