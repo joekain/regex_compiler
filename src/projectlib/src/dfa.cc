@@ -10,6 +10,7 @@ namespace dfa {
 using InputSet = std::unordered_set<Input>;
 
 struct Builder {
+  State initial;
   nfa::NFA& nfa_;
   std::list<State> queue_;
   TransitionTable table;
@@ -31,9 +32,10 @@ struct Builder {
   InputSet inputsForState(State dfa_state) {
     InputSet set;
     for (auto nfa_state : dfa_state) {
-      auto transitions = nfa_.getTransitionsForState(nfa_state);
-      for (auto transition : transitions) {
-        set.emplace(transition.input);
+      for (auto transition : nfa_.getTransitionsForState(nfa_state)) {
+        if (transition.input != nfa::NFA::epsilon) {
+          set.emplace(transition.input);
+        }
       }
     }
     return set;
@@ -73,7 +75,8 @@ struct Builder {
   }
 
   Builder(nfa::NFA& nfa) : nfa_(nfa) {
-    push(State{nfa::NFA::initial});
+    initial = nfa_.getEpsilonClosure(nfa::NFA::initial);
+    push(initial);
     while (!empty()) {
       State from = pop();
 
@@ -88,9 +91,10 @@ struct Builder {
   }
 };
 
-DFA::DFA(nfa::NFA& nfa) : initial{nfa::NFA::initial} {
+DFA::DFA(nfa::NFA& nfa) {
   auto builder = Builder(nfa);
   table = std::move(builder.table);
+  initial = std::move(builder.initial);
 
   // Build final states - a state is final if it contains the final NFA state
   for (auto&& [state, _] : table) {

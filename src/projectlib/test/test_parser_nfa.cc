@@ -45,8 +45,23 @@ TEST_CASE("Parse and build NFA for /a|b*/", "[Parser, NFA]") {
   Plotter(nfa, "/tmp/a_alternate_b_kleene.dot");
 }
 
+TEST_CASE("Parse and build NFA for /a|b/", "[Parser, NFA]") {
+  auto p = Parser("a|b");
+  auto nfa = NFA(p.begin(), p.end());
+  Plotter(nfa, "/tmp/a_alternate_b.dot");
+}
+
 TEST_CASE("Parse and build NFA for /(ac)|b*/", "[Parser, NFA]") {
   auto p = Parser("(ac)|b*");
   auto nfa = NFA(p.begin(), p.end());
   Plotter(nfa, "/tmp/open_a_c_close_alternate_b_kleene.dot");
+}
+
+TEST_CASE("Epsilon closure for /a|b/", "[NFA]") {
+  auto p = Parser("a|b");
+  auto nfa = NFA(p.begin(), p.end());
+  auto state = nfa.getTransition(NFA::initial, 'a');
+  CHECK_NOTHROW(nfa.getEpsilonClosure(state));
+  StateSet closure = nfa.getEpsilonClosure(state);
+  CHECK(closure.size() == 2);
 }

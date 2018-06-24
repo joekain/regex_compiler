@@ -6,8 +6,8 @@
 #pragma once
 
 #include <list>
+#include <set>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "terms.h"
 
@@ -40,11 +40,14 @@ using TransitionList = std::list<Transition>;
 // A transition table is a map of states to list of possible transitions
 using TransitionTable = std::unordered_map<State, TransitionList>;
 
-using StateSet = std::unordered_set<State>;
+using StateSet = std::set<State>;
+
+using ClosureMap = std::unordered_map<State, StateSet>;
 
 class NFA {
   TransitionTable table;
   State end_state;
+  ClosureMap epsilonClosures;
 
  public:
   static constexpr State initial = 0;
@@ -70,8 +73,8 @@ class NFA {
     return end_state;
   }
 
-  StateSet getEpsilonClosure(State state) {
-    return StateSet{};
+  const StateSet& getEpsilonClosure(State state) const {
+    return epsilonClosures.at(state);
   }
 };
 

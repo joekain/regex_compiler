@@ -64,34 +64,35 @@ TEST_CASE("It can build a DFA from an NFA of a single literal", "[DFA]") {
   CHECK(dfa.accepts("a"));
 }
 
-// TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
-//   Terms base{Literal{'a'}};
-//   Terms terms{Kleene{base}};
-//   auto dfa = dfa_from_terms(terms);
-//   Plotter(dfa, "/tmp/dfa_a_kleene.dot");
-//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
-//   CHECK(dfa.accepts("a"));
-//   CHECK(dfa.accepts("aa"));
-//   // CHECK(dfa.accepts(""));
-// }
+TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
+  Terms base{Literal{'a'}};
+  Terms terms{Kleene{base}};
+  auto dfa = dfa_from_terms(terms);
+  Plotter(dfa, "/tmp/dfa_a_kleene.dot");
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+  CHECK(dfa.accepts(""));
+  CHECK(dfa.accepts("a"));
+  CHECK(dfa.accepts("aa"));
+  CHECK(!dfa.accepts("b"));
+}
 
-// TEST_CASE("It can build a DFA for an Alternative", "[DFA]") {
-//   Terms alternatives{Literal{'a'}, Literal{'b'}};
-//   Terms terms{Alternative{alternatives}};
-//   auto dfa = dfa_from_terms(terms);
-//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
-//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'b'));
-// }
+TEST_CASE("It can build a DFA for an Alternative", "[DFA]") {
+  Terms alternatives{Literal{'a'}, Literal{'b'}};
+  Terms terms{Alternative{alternatives}};
+  auto dfa = dfa_from_terms(terms);
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'b'));
+}
 
-// TEST_CASE("It can build a DFA for a sequence", "[DFA]") {
-//   Terms terms{Literal{'a'}, Literal{'b'}};
-//   auto dfa = dfa_from_terms(terms);
-//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
-// }
+TEST_CASE("It can build a DFA for a sequence", "[DFA]") {
+  Terms terms{Literal{'a'}, Literal{'b'}};
+  auto dfa = dfa_from_terms(terms);
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+}
 
-// TEST_CASE("It can build a DFA for a Group", "[DFA]") {
-//   Terms alternatives{Literal{'a'}, Literal{'b'}};
-//   Terms terms{Group{alternatives}};
-//   auto dfa = dfa_from_terms(terms);
-//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
-// }
+TEST_CASE("It can build a DFA for a Group", "[DFA]") {
+  Terms alternatives{Literal{'a'}, Literal{'b'}};
+  Terms terms{Group{alternatives}};
+  auto dfa = dfa_from_terms(terms);
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+}

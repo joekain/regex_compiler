@@ -13,7 +13,7 @@ namespace dfa {
 using Input = nfa::Input;
 
 // A DFA state may be built up of one or more states from an NFA.
-using State = std::set<nfa::State>;
+using State = nfa::StateSet;
 
 struct Transition {
   Input input;

@@ -6,6 +6,7 @@ namespace nfa {
 struct Builder {
   TransitionTable table;
   State next_state;
+  ClosureMap closures;
 
   void ensure_node(State s) {
     TransitionList l;
@@ -85,6 +86,33 @@ struct Builder {
     }
   }
 
+  StateSet build_closure(State state) {
+    // A state is in its own closure
+    StateSet closure{state};
+
+    auto list = table.at(state);
+    for (auto transition : list) {
+      if (transition.input == NFA::epsilon) {
+        auto new_state = transition.new_state;
+        if (closure.find(new_state) == closure.end()) {
+          // new_state is reachable by epsilon, insert it
+          closure.emplace(new_state);
+
+          // the closure of new_state is also reachable, insert it
+          auto new_states = build_closure(transition.new_state);
+          closure.insert(begin(new_states), end(new_states));
+        }
+      }
+    }
+    return closure;
+  }
+
+  void build_closures() {
+    for (auto state = NFA::initial; state <= next_state; ++state) {
+      closures.emplace(state, build_closure(state));
+    }
+  }
+
   Builder(Terms::iterator begin, Terms::iterator end) {
     State current_state = NFA::initial;
     next_state = NFA::initial;
@@ -94,13 +122,16 @@ struct Builder {
     for (auto termIt = begin; termIt != end; termIt++) {
       current_state = visit_term(current_state, *termIt);
     }
+
+    build_closures();
   }
-};
+};  // namespace nfa
 
 NFA::NFA(Terms::iterator begin, Terms::iterator end) {
   Builder builder{begin, end};
   table = std::move(builder.table);
   end_state = builder.next_state;
+  epsilonClosures = std::move(builder.closures);
 }
 
 }  // namespace nfa
