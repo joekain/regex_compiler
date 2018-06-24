@@ -74,3 +74,10 @@ TEST_CASE("It can build an NFA for a Group", "[NFA]") {
   auto state = nfa.getTransition(NFA::initial, 'a');
   CHECK_THAT(nfa, Transitions(state, 'b'));
 }
+
+TEST_CASE("It can return an epsilon closure for a state", "[NFA]") {
+  Terms terms{Literal{'a'}};
+  auto nfa = NFA(std::begin(terms), std::end(terms));
+  CHECK_NOTHROW(nfa.getEpsilonClosure(NFA::initial));
+  StateSet _ = nfa.getEpsilonClosure(NFA::initial);
+}
