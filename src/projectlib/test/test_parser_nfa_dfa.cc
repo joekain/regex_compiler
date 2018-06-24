@@ -12,7 +12,7 @@ using namespace std;
 using namespace regex_compiler;
 using namespace dfa;
 
-static DFA dfa_from_regex(const char *regex) {
+static DFA dfa_from_regex(const char* regex) {
   auto p = Parser(regex);
   auto nfa = nfa::NFA(p.begin(), p.end());
   return DFA(nfa);
@@ -55,21 +55,29 @@ TEST_CASE("Parse and build DFA for /ab*/", "[Parser, NFA, DFA]") {
   CHECK(!dfa.accepts("aab"));
 }
 
-// TEST_CASE("Parse and build DFA for /a|b*/", "[Parser, NFA, DFA]") {
-//   auto dfa = dfa_from_regex("a|b*");
-//   Plotter(dfa, "/tmp/dfa_a_alternate_b_kleene.dot");
-//   CHECK(dfa.accepts("a"));
-// }
+TEST_CASE("Parse and build DFA for /a|b/", "[Parser, NFA, DFA]") {
+  auto dfa = dfa_from_regex("a|b");
+  Plotter(dfa, "/tmp/dfa_a_alternate_b.dot");
+  CHECK(dfa.accepts("b"));
+  CHECK(dfa.accepts("a"));
+  CHECK(!dfa.accepts("aa"));
+  CHECK(!dfa.accepts("ab"));
+}
 
-// TEST_CASE("Parse and build DFA for /a|b/", "[Parser, NFA, DFA]") {
-//   auto dfa = dfa_from_regex("a|b");
-//   Plotter(dfa, "/tmp/dfa_a_alternate_b.dot");
-//   CHECK(dfa.accepts("b"));
-//   CHECK(dfa.accepts("a"));
-// }
+TEST_CASE("Parse and build DFA for /a|b*/", "[Parser, NFA, DFA]") {
+  auto dfa = dfa_from_regex("a|b*");
+  Plotter(dfa, "/tmp/dfa_a_alternate_b_kleene.dot");
+  CHECK(dfa.accepts("a"));
+  CHECK(dfa.accepts("b"));
+  CHECK(dfa.accepts("bb"));
+  CHECK(!dfa.accepts("aa"));
+}
 
-// TEST_CASE("Parse and build DFA for /(ac)|b*/", "[Parser, NFA, DFA]") {
-//   auto dfa = dfa_from_regex("(ac)|b*");
-//   auto nfa = NFA(p.begin(), p.end());
-//   Plotter(nfa, "/tmp/open_a_c_close_alternate_b_kleene.dot");
-// }
+TEST_CASE("Parse and build DFA for /(ac)|b*/", "[Parser, NFA, DFA]") {
+  auto dfa = dfa_from_regex("(ac)|b*");
+  Plotter(dfa, "/tmp/dfa_open_a_c_close_alternate_b_kleene.dot");
+  CHECK(dfa.accepts("ac"));
+  CHECK(dfa.accepts("b"));
+  CHECK(dfa.accepts("bb"));
+  CHECK(!dfa.accepts("ba"));
+}

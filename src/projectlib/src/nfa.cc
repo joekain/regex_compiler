@@ -30,15 +30,18 @@ struct Builder {
 
   State visit_alternative(State current_state, const Term &term) {
     auto terms = std::get<Alternative>(term).patterns;
-    State end = ++next_state;
-    State last;
+    std::vector<State> lasts(2);
 
     for (int i = 0; i < 2; i++) {
-      last = visit_term(current_state, terms[i]);
-      insert(last, NFA::epsilon, end);
+      lasts[i] = visit_term(current_state, terms[i]);
     }
 
-    return last;
+    State end = ++next_state;
+    for (int i = 0; i < 2; i++) {
+      insert(lasts[i], NFA::epsilon, end);
+    }
+
+    return end;
   }
 
   State visit_kleene(State current_state, const Term &term) {
