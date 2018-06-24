@@ -20,9 +20,9 @@ DFA dfa_from_terms(Terms terms) {
   return DFA(nfa);
 }
 
-TEST_CASE("We can build a DFA using dfa_from_terms", "[DFA]") {
-  CHECK_NOTHROW(dfa_from_terms({Literal{'a'}}));
-}
+// TEST_CASE("We can build a DFA using dfa_from_terms", "[DFA]") {
+//   CHECK_NOTHROW(dfa_from_terms({Literal{'a'}}));
+// }
 
 std::string to_string(State s) {
   std::ostringstream ss;
@@ -64,16 +64,16 @@ class DFATransitions : public Catch::MatcherBase<DFA> {
 //   CHECK(dfa.accepts("a"));
 // }
 
-TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
-  Terms base{Literal{'a'}};
-  Terms terms{Kleene{base}};
-  auto dfa = dfa_from_terms(terms);
-  Plotter(dfa, "/tmp/dfa_a_kleene.dot");
-  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
-  CHECK(dfa.accepts("a"));
-  CHECK(dfa.accepts("aa"));
-  // CHECK(dfa.accepts(""));
-}
+// TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
+//   Terms base{Literal{'a'}};
+//   Terms terms{Kleene{base}};
+//   auto dfa = dfa_from_terms(terms);
+//   Plotter(dfa, "/tmp/dfa_a_kleene.dot");
+//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+//   CHECK(dfa.accepts("a"));
+//   CHECK(dfa.accepts("aa"));
+//   // CHECK(dfa.accepts(""));
+// }
 
 // TEST_CASE("It can build a DFA for an Alternative", "[DFA]") {
 //   Terms alternatives{Literal{'a'}, Literal{'b'}};
