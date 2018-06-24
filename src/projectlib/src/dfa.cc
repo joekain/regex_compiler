@@ -7,20 +7,90 @@
 namespace regex_compiler {
 namespace dfa {
 
-DFA::DFA(nfa::NFA& nfa) : initial{nfa::NFA::initial} {
-  // Build epsilon closures for all NFA states
-  // Add {nfa::initial} as dfa::initial
-  //   For each input, I
-  //     Consider IE*, this really means
-  //       For each NFA transition for I
-  //         Look a NFA(state, I) and get that new states E closure
+using InputSet = std::unordered_set<Input>;
 
-  std::list<State> queue;
-  queue.push_back(initial);
-  while (!queue.empty()) {
-    State from = queue.front();
-    queue.pop_front();
+struct Builder {
+  nfa::NFA& nfa_;
+  std::list<State> queue_;
+  TransitionTable table;
+
+  void push(State s) {
+    queue_.push_back(s);
   }
+
+  State pop() {
+    State val = queue_.front();
+    queue_.pop_front();
+    return val;
+  }
+
+  bool empty() {
+    return queue_.empty();
+  }
+
+  InputSet inputsForState(State dfa_state) {
+    InputSet set;
+    for (auto nfa_state : dfa_state) {
+      auto transitions = nfa_.getTransitionsForState(nfa_state);
+      for (auto transition : transitions) {
+        set.emplace(transition.input);
+      }
+    }
+    return set;
+  }
+
+  State buildTransition(State from, Input input) {
+    State to;
+
+    for (auto nfa_state : from) {
+      auto nfa_transitions = nfa_.getTransitionsForState(nfa_state);
+      for (auto nfa_transition : nfa_transitions) {
+        if (input != nfa_transition.input) continue;
+        auto closure = nfa_.getEpsilonClosure(nfa_transition.new_state);
+        to.insert(begin(closure), end(closure));
+      }
+    }
+
+    return to;
+  }
+
+  bool haveState(State s) {
+    return table.find(s) != table.end();
+  }
+
+  void ensure_node(State s) {
+    TransitionList l;
+    table.emplace(s, l);
+  }
+
+  void insert(State from, Input input, State to) {
+    ensure_node(from);
+    ensure_node(to);
+
+    auto& list = table.at(from);
+    Transition t{input, to};
+    list.push_front(t);
+  }
+
+  Builder(nfa::NFA& nfa) : nfa_(nfa) {
+    push(State{nfa::NFA::initial});
+    while (!empty()) {
+      State from = pop();
+
+      for (auto input : inputsForState(from)) {
+        State to = buildTransition(from, input);
+        if (!haveState(to)) {
+          push(to);
+        }
+        insert(from, input, to);
+      }
+    }
+  }
+};
+
+DFA::DFA(nfa::NFA& nfa) : initial{nfa::NFA::initial} {
+  auto builder = Builder(nfa);
+  table = std::move(builder.table);
 
   // Build final states - a state is final if it contains the final NFA state
   for (auto&& [state, _] : table) {

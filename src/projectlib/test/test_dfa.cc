@@ -9,20 +9,20 @@ using namespace std;
 using namespace regex_compiler;
 using namespace regex_compiler::dfa;
 
-// TEST_CASE("It can build a DFA from an NFA", "[DFA]") {
-//   Terms terms{};
-//   auto nfa = nfa::NFA(std::begin(terms), std::end(terms));
-//   CHECK_NOTHROW(DFA(nfa));
-// }
+TEST_CASE("It can build a DFA from an NFA", "[DFA]") {
+  Terms terms{};
+  auto nfa = nfa::NFA(std::begin(terms), std::end(terms));
+  CHECK_NOTHROW(DFA(nfa));
+}
 
 DFA dfa_from_terms(Terms terms) {
   auto nfa = nfa::NFA(std::begin(terms), std::end(terms));
   return DFA(nfa);
 }
 
-// TEST_CASE("We can build a DFA using dfa_from_terms", "[DFA]") {
-//   CHECK_NOTHROW(dfa_from_terms({Literal{'a'}}));
-// }
+TEST_CASE("We can build a DFA using dfa_from_terms", "[DFA]") {
+  CHECK_NOTHROW(dfa_from_terms({Literal{'a'}}));
+}
 
 std::string to_string(State s) {
   std::ostringstream ss;
@@ -56,13 +56,13 @@ class DFATransitions : public Catch::MatcherBase<DFA> {
   }
 };
 
-// TEST_CASE("It can build a DFA from an NFA of a single literal", "[DFA]") {
-//   auto dfa = dfa_from_terms({Literal{'a'}});
-//   CHECK(dfa.getTransitionsForState(dfa.initial).size() == 1);
-//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
-//   Plotter(dfa, "/tmp/dfa_a.dot");
-//   CHECK(dfa.accepts("a"));
-// }
+TEST_CASE("It can build a DFA from an NFA of a single literal", "[DFA]") {
+  auto dfa = dfa_from_terms({Literal{'a'}});
+  CHECK(dfa.getTransitionsForState(dfa.initial).size() == 1);
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+  Plotter(dfa, "/tmp/dfa_a.dot");
+  CHECK(dfa.accepts("a"));
+}
 
 // TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
 //   Terms base{Literal{'a'}};
