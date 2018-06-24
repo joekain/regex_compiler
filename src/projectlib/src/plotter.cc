@@ -56,15 +56,28 @@ void Plotter::print_edge(State from, nfa::Input input, State to) {
   dot << "];\n";
 }
 
+template <class State>
+void Plotter::print_final_node(State node) {
+  dot << "  \"" << to_string(node) << "\" [shape=doublecircle];\n";
+}
+
+void Plotter::print_final_nodes(const dfa::DFA &dfa) {
+  for (auto state : dfa.getFinalStates()) {
+    print_final_node(state);
+  }
+}
+
 Plotter::Plotter(const nfa::NFA &nfa, const char *dotfilename) : dot(dotfilename) {
   print_header();
   print_edges(nfa);
+  print_final_node(nfa.final());
   print_footer();
 }
 
 Plotter::Plotter(const dfa::DFA &dfa, const char *dotfilename) : dot(dotfilename) {
   print_header();
   print_edges(dfa);
+  print_final_nodes(dfa);
   print_footer();
 }
 

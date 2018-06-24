@@ -21,6 +21,12 @@ TEST_CASE("Parse and build NFA for /a/", "[Parser, NFA]") {
   Plotter(nfa, "/tmp/a.dot");
 }
 
+TEST_CASE("Parse and build NFA for /a*/", "[Parser, NFA]") {
+  auto p = Parser("a*");
+  auto nfa = NFA(p.begin(), p.end());
+  Plotter(nfa, "/tmp/a_kleene.dot");
+}
+
 TEST_CASE("Parse and build NFA for /ab/", "[Parser, NFA]") {
   auto p = Parser("ab");
   auto nfa = NFA(p.begin(), p.end());

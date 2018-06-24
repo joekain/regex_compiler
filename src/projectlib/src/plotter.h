@@ -17,6 +17,9 @@ class Plotter {
   void print_edges(const dfa::DFA &dfa);
   template <class State>
   void print_edge(State from, nfa::Input input, State to);
+  template <class State>
+  void print_final_node(State node);
+  void print_final_nodes(const dfa::DFA &dfa);
   void print_footer();
 
  public:

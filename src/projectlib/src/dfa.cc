@@ -1,12 +1,11 @@
-#include "dfa.h"
-
 #include <iostream>
+#include <sstream>
 #include <unordered_set>
+
+#include "dfa.h"
 
 namespace regex_compiler {
 namespace dfa {
-
-State DFA::initial{nfa::NFA::initial};
 
 using NFATransitionSet = std::unordered_set<nfa::Transition>;
 
@@ -33,13 +32,38 @@ static StatesByInput reachable(const nfa::NFA& nfa, nfa::State from) {
   StatesByInput map;
 
   for (nfa::Transition& nfa_transition : list) {
-    insert_new_transition(map, nfa_transition);
-    if (nfa_transition.input == nfa::NFA::epsilon) {
+    if (nfa_transition.input != nfa::NFA::epsilon) {
+      insert_new_transition(map, nfa_transition);
+    } else {
       insert_recursive_transitions(map, nfa, nfa_transition.new_state);
     }
   }
 
   return map;
+}
+
+static State reachable_by(const nfa::NFA& nfa, nfa::State from, nfa::Input input) {
+  auto list = nfa.getTransitionsForState(from);
+  State states;
+
+  for (nfa::Transition& nfa_transition : list) {
+    if (nfa_transition.input == input) {
+      states.emplace(nfa_transition.new_state);
+    }
+    if (nfa_transition.input == nfa::NFA::epsilon) {
+      auto new_states = reachable_by(nfa, nfa_transition.new_state, input);
+      states.insert(begin(new_states), end(new_states));
+    }
+  }
+
+  return states;
+}
+
+static void extend(const nfa::NFA& nfa, State& from) {
+  for (auto nfa_state : from) {
+    auto epsilon_states = reachable_by(nfa, nfa_state, nfa::NFA::epsilon);
+    from.insert(begin(epsilon_states), end(epsilon_states));
+  }
 }
 
 void DFA::ensure_node(State s) {
@@ -56,17 +80,29 @@ void DFA::insert(State from, Input input, State to) {
   list.push_front(t);
 }
 
-DFA::DFA(nfa::NFA& nfa) {
+static std::string to_string(State s) {
+  std::ostringstream ss;
+  ss << "{";
+  for (auto elem : s) {
+    ss << elem << " ";
+  }
+  ss << "}";
+  return ss.str();
+}
+
+DFA::DFA(nfa::NFA& nfa) : initial{nfa::NFA::initial} {
   std::list<State> queue;
 
-  // auto initial_state = reachable(nfa, nfa::NFA::initial).at(nfa::NFA::epsilon);
-  auto initial_state = dfa::DFA::initial;
-  ensure_node(initial_state);
-  queue.push_back(initial_state);
+  // Build epsilon closures for all NFA states
+
+  queue.push_back(initial);
   while (!queue.empty()) {
     State from = queue.front();
     queue.pop_front();
+    extend(nfa, from);
+    ensure_node(from);
 
+    // need to merge all the reachables before generating the states and transitions
     for (auto nfa_state : from) {
       // The reachable sets of transitions are dfa:State objects
       for (auto&& [input, to] : reachable(nfa, nfa_state)) {

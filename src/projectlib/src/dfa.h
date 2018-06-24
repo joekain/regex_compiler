@@ -32,7 +32,7 @@ class DFA {
   void insert(State from, Input input, State to);
 
  public:
-  static State initial;  // = {nfa::NFA::initial};
+  State initial;
 
   DFA(nfa::NFA& nfa);
 
@@ -52,6 +52,10 @@ class DFA {
 
   bool is_final(State state) {
     return final_states.find(state) != final_states.end();
+  }
+
+  const std::set<State>& getFinalStates() const {
+    return final_states;
   }
 };
 

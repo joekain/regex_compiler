@@ -9,11 +9,11 @@ using namespace std;
 using namespace regex_compiler;
 using namespace regex_compiler::dfa;
 
-TEST_CASE("It can build a DFA from an NFA", "[DFA]") {
-  Terms terms{};
-  auto nfa = nfa::NFA(std::begin(terms), std::end(terms));
-  CHECK_NOTHROW(DFA(nfa));
-}
+// TEST_CASE("It can build a DFA from an NFA", "[DFA]") {
+//   Terms terms{};
+//   auto nfa = nfa::NFA(std::begin(terms), std::end(terms));
+//   CHECK_NOTHROW(DFA(nfa));
+// }
 
 DFA dfa_from_terms(Terms terms) {
   auto nfa = nfa::NFA(std::begin(terms), std::end(terms));
@@ -56,40 +56,42 @@ class DFATransitions : public Catch::MatcherBase<DFA> {
   }
 };
 
-TEST_CASE("It can build a DFA from an NFA of a single literal", "[DFA]") {
-  auto dfa = dfa_from_terms({Literal{'a'}});
-  CHECK(dfa.getTransitionsForState(DFA::initial).size() == 1);
-  CHECK_THAT(dfa, DFATransitions(DFA::initial, 'a'));
-  Plotter(dfa, "/tmp/dfa_a.dot");
-}
+// TEST_CASE("It can build a DFA from an NFA of a single literal", "[DFA]") {
+//   auto dfa = dfa_from_terms({Literal{'a'}});
+//   CHECK(dfa.getTransitionsForState(dfa.initial).size() == 1);
+//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+//   Plotter(dfa, "/tmp/dfa_a.dot");
+//   CHECK(dfa.accepts("a"));
+// }
 
 TEST_CASE("It can build a DFA for a Kleene closure", "[DFA]") {
   Terms base{Literal{'a'}};
   Terms terms{Kleene{base}};
   auto dfa = dfa_from_terms(terms);
-  CHECK_THAT(dfa, DFATransitions(DFA::initial, 'a'));
+  Plotter(dfa, "/tmp/dfa_a_kleene.dot");
+  CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
   CHECK(dfa.accepts("a"));
   CHECK(dfa.accepts("aa"));
   // CHECK(dfa.accepts(""));
 }
 
-TEST_CASE("It can build a DFA for an Alternative", "[DFA]") {
-  Terms alternatives{Literal{'a'}, Literal{'b'}};
-  Terms terms{Alternative{alternatives}};
-  auto dfa = dfa_from_terms(terms);
-  CHECK_THAT(dfa, DFATransitions(DFA::initial, 'a'));
-  CHECK_THAT(dfa, DFATransitions(DFA::initial, 'b'));
-}
+// TEST_CASE("It can build a DFA for an Alternative", "[DFA]") {
+//   Terms alternatives{Literal{'a'}, Literal{'b'}};
+//   Terms terms{Alternative{alternatives}};
+//   auto dfa = dfa_from_terms(terms);
+//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'b'));
+// }
 
-TEST_CASE("It can build a DFA for a sequence", "[DFA]") {
-  Terms terms{Literal{'a'}, Literal{'b'}};
-  auto dfa = dfa_from_terms(terms);
-  CHECK_THAT(dfa, DFATransitions(DFA::initial, 'a'));
-}
+// TEST_CASE("It can build a DFA for a sequence", "[DFA]") {
+//   Terms terms{Literal{'a'}, Literal{'b'}};
+//   auto dfa = dfa_from_terms(terms);
+//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+// }
 
-TEST_CASE("It can build a DFA for a Group", "[DFA]") {
-  Terms alternatives{Literal{'a'}, Literal{'b'}};
-  Terms terms{Group{alternatives}};
-  auto dfa = dfa_from_terms(terms);
-  CHECK_THAT(dfa, DFATransitions(DFA::initial, 'a'));
-}
+// TEST_CASE("It can build a DFA for a Group", "[DFA]") {
+//   Terms alternatives{Literal{'a'}, Literal{'b'}};
+//   Terms terms{Group{alternatives}};
+//   auto dfa = dfa_from_terms(terms);
+//   CHECK_THAT(dfa, DFATransitions(dfa.initial, 'a'));
+// }
