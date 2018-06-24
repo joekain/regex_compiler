@@ -1,1 +1,5 @@
-Checks: "cppcore*,clang-analyzer-*,misc-*. modernize-*,performance-*,portability-*"
+Checks: "cppcore*,clang-analyzer-*,misc-*. modernize-*,performance-*,portability-*,readability-*"
+
+CheckOptions:
+  - key:             readability-braces-around-statements.ShortStatementLines
+    value:           '1'

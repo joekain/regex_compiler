@@ -80,13 +80,14 @@ struct Builder {
   State visit_term(State current_state, const Term &t) {
     if (std::holds_alternative<Literal>(t)) {
       return visit_literal(current_state, t);
-    } else if (std::holds_alternative<Alternative>(t)) {
-      return visit_alternative(current_state, t);
-    } else if (std::holds_alternative<Kleene>(t)) {
-      return visit_kleene(current_state, t);
-    } else {
-      return visit_group(current_state, t);
     }
+    if (std::holds_alternative<Alternative>(t)) {
+      return visit_alternative(current_state, t);
+    }
+    if (std::holds_alternative<Kleene>(t)) {
+      return visit_kleene(current_state, t);
+    }
+    return visit_group(current_state, t);
   }
 
   StateSet build_closure(State state) {
