@@ -1,1 +1,1 @@
-Checks: "cppcore*,clang-analyzer-*,misc-*. modernize-*"
+Checks: "cppcore*,clang-analyzer-*,misc-*. modernize-*,performance-*"

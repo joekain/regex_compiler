@@ -15,7 +15,7 @@ struct Builder {
   std::list<State> queue_;
   TransitionTable table;
 
-  void push(State s) {
+  void push(const State& s) {
     queue_.push_back(s);
   }
 
@@ -56,7 +56,7 @@ struct Builder {
     return to;
   }
 
-  bool haveState(State s) {
+  bool haveState(const State& s) {
     return table.find(s) != table.end();
   }
 
@@ -65,7 +65,7 @@ struct Builder {
     table.emplace(s, l);
   }
 
-  void insert(State from, Input input, State to) {
+  void insert(const State& from, Input input, const State& to) {
     ensure_node(from);
     ensure_node(to);
 

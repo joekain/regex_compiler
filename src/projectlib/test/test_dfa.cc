@@ -38,7 +38,7 @@ class DFATransitions : public Catch::MatcherBase<DFA> {
   Input input_;
 
  public:
-  DFATransitions(State state, Input input) : state_(state), input_(input) {
+  DFATransitions(State state, Input input) : state_(std::move(state)), input_(input) {
   }
 
   virtual bool match(DFA const& dfa) const override {

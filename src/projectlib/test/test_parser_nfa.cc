@@ -62,6 +62,6 @@ TEST_CASE("Epsilon closure for /a|b/", "[NFA]") {
   auto nfa = NFA(p.begin(), p.end());
   auto state = nfa.getTransition(NFA::initial, 'a');
   CHECK_NOTHROW(nfa.getEpsilonClosure(state));
-  StateSet closure = nfa.getEpsilonClosure(state);
+  const StateSet &closure = nfa.getEpsilonClosure(state);
   CHECK(closure.size() == 2);
 }

@@ -79,6 +79,6 @@ TEST_CASE("It can return an epsilon closure for a state", "[NFA]") {
   Terms terms{Literal{'a'}};
   auto nfa = NFA(std::begin(terms), std::end(terms));
   CHECK_NOTHROW(nfa.getEpsilonClosure(NFA::initial));
-  StateSet closure = nfa.getEpsilonClosure(NFA::initial);
+  const StateSet& closure = nfa.getEpsilonClosure(NFA::initial);
   CHECK(closure.size() == 1);
 }

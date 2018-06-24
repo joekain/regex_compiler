@@ -79,7 +79,7 @@ void Plotter::print_final_node(State node) {
 }
 
 void Plotter::print_final_nodes(const dfa::DFA &dfa) {
-  for (auto state : dfa.getFinalStates()) {
+  for (const auto &state : dfa.getFinalStates()) {
     print_final_node(state);
   }
 }
