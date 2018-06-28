@@ -1,4 +1,3 @@
-set(catch_exe_source_list)
 add_custom_target(build-test)
 macro(add_project_test name)
   if("${ARGV1}" STREQUAL "CATCH")
@@ -18,6 +17,7 @@ add_project_test(test_nfa CATCH)
 add_project_test(test_parser_nfa CATCH)
 add_project_test(test_parser_nfa_dfa CATCH)
 add_project_test(test_dfa CATCH)
+add_project_test(test_dfa_table CATCH)
 
 # Create main test executable
 add_executable(unit_tests ${catch_exe_source_list})

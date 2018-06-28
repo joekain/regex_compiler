@@ -23,7 +23,7 @@ set(LIBRARIES)
 # Import configuration options into code
 configure_file(projectlib/config.h.cmake config.h)
 file(GLOB lib_sources src/*.cc)
-add_library(${PROJECT_NAME} ${lib_sources})
+add_library(${PROJECT_NAME} ${lib_sources} src/dfa_table.cc src/dfa_table.h src/dfa_table.cc src/dfa_table.h)
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
