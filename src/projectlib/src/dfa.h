@@ -28,15 +28,12 @@ class DFA {
   std::set<State> final_states;
   TransitionTable table;
 
-  void ensure_node(State s);
-  void insert(State from, Input input, State to);
-
  public:
   State initial;
 
   DFA(nfa::NFA& nfa);
 
-  TransitionList getTransitionsForState(State state) const {
+  TransitionList getTransitionsForState(const State &state) const {
     return table.at(state);
   }
 
@@ -50,7 +47,7 @@ class DFA {
 
   bool accepts(std::string);
 
-  bool is_final(State state) {
+  bool is_final(const State &state) {
     return final_states.find(state) != final_states.end();
   }
 
